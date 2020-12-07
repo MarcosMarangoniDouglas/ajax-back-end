@@ -10,7 +10,7 @@
     "Star Wars",
     "Characters"
   ],
-  "author": "Marcos Marangoni & Anna Paula",
+  "author": "Marcos Marangoni & Ana Paula",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",

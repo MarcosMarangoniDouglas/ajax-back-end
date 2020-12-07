@@ -4,15 +4,19 @@ const Schema = mongoose.Schema;
 const CharacterSchema = new Schema({
   name: {
     type: String,
-    trim: true,
+    trim: true
   },
   height: {
     type: String,
-    trim: true,
+    trim: true
   },
   mass: {
     type: String,
-    trim: true,
+    trim: true
+  },
+  gender: {
+    type: String,
+    trim: true
   }
 });
   

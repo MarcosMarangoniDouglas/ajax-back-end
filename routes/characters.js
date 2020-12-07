@@ -24,7 +24,8 @@ router.post("/", async (req, res) => {
   const character = new Character({
     name: req.body.name,
     height: req.body.height,
-    mass: req.body.mass
+    mass: req.body.mass,
+    gender: req.body.gender
   });
   try {
     const newCharacter = await character.save();
@@ -48,13 +49,16 @@ router.get("/:id", getCharacter, (req, res) => {
  */
 router.patch("/:id", getCharacter, async (req, res) => {
   if (req.body.name != null) {
-    res.med.name = req.body.name; //replace old entry with new entry
+    res.name = req.body.name; //replace old entry with new entry
   }
   if (req.body.height != null) {
     res.height = req.body.height;
   }
    if (req.body.mass != null) {
     res.mass = req.body.mass;
+  }
+  if (req.body.gender != null) {
+    res.gender = req.body.gender;
   }
   
   try {
@@ -72,7 +76,7 @@ router.patch("/:id", getCharacter, async (req, res) => {
 router.put("/:id", getCharacter, async (req, res) => {
   try {
     Object.assign(res.character, req.body);
-    const updatedCharacter = await res.med.save();
+    const updatedCharacter = await res.character.save();
     res.json(updatedCharacter);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -86,7 +90,7 @@ router.put("/:id", getCharacter, async (req, res) => {
 router.delete("/:id", getCharacter, async (req, res) => {
   try {
     await res.character.deleteOne();
-    res.json({ message: "Drug record has been deleted"});
+    res.json({ message: "Character record has been deleted"});
   } catch (err) {
     res.status(500).json({message: err.message});
   }
@@ -106,7 +110,7 @@ async function getCharacter(req, res, next) {
   let character;
   try {
     character = await Character.findById(req.params.id);
-    if (med == null) {
+    if (character == null) {
       return res.status(404).json({message: "Cannot find that Character record."});
     }
   } catch (err) {
@@ -135,7 +139,8 @@ router.get("/seeds", async (req, res) => {
         const character = new Character({
           name: characterJson.name,
           height: characterJson.height,
-          mass: characterJson.mass
+          mass: characterJson.mass,
+          gender: characterJson.gender
         });
         await character.save();
       }
