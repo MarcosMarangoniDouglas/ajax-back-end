@@ -1,0 +1,22 @@
+{
+  "name": "start-wars-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "serverStart": "node server.js"
+  },
+  "keywords": [
+    "Star Wars",
+    "Characters"
+  ],
+  "author": "Marcos Marangoni & Anna Paula",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "mongoose": "^5.10.11",
+    "node-fetch": "^2.6.1"
+  }
+}
