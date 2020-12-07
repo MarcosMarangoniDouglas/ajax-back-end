@@ -9,10 +9,42 @@ const fetch = require('node-fetch');
  */
 router.get("/", async (req, res) => {
   try {
-    const characters = await Character.find()
+    const characters = await Character.find();
+    console.log('IDEX');
     res.json(characters)
   } catch (err) {
     res.status(500).json({message: err.message})
+  }
+});
+
+/**
+ * GET - /characters/seeds
+ * Load the database with 50 characters.
+ * Here we use swapi (Star Wars API) to fetch star wars characters.
+ * The api limit is 10000 fetches per day.
+ */
+router.get("/seeds", async (req, res) => {
+  try {
+    let maxIndex = 50;
+    for (let index = 1; index <= maxIndex; index++) {
+      const characterFetch = await fetch(`https://swapi.dev/api/people/${index}/`);
+      const characterJson = await characterFetch.json();
+      console.log(`${index}: ${characterJson.name}`);
+      if(!characterJson.name) maxIndex++;
+      else {
+        const character = new Character({
+          name: characterJson.name,
+          height: characterJson.height,
+          mass: characterJson.mass,
+          gender: characterJson.gender
+        });
+        await character.save();
+      }
+    }
+    res.status(200).json({ message: 'SEEDS OK' });
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: err.message});
   }
 });
  
@@ -96,10 +128,6 @@ router.delete("/:id", getCharacter, async (req, res) => {
   }
 });
 
-/**
- * HELPER FUNCTIONS
- */
-
  /**
   * Middleware to get the character.
   * @param {*} req 
@@ -120,36 +148,5 @@ async function getCharacter(req, res, next) {
   res.character = character;
   next();
 }
-
-/**
- * GET - /characters/seeds
- * Load the database with 50 characters.
- * Here we use swapi (Star Wars API) to fetch star wars characters.
- * The api limit is 10000 fetches per day.
- */
-router.get("/seeds", async (req, res) => {
-  try {
-    let maxIndex = 50;
-    for (let index = 1; index <= maxIndex; index++) {
-      const characterFetch = await fetch(`https://swapi.dev/api/people/${index}/`);
-      const characterJson = await characterFetch.json();
-      console.log(`${index}: ${characterJson.name}`);
-      if(!characterJson.name) maxIndex++;
-      else {
-        const character = new Character({
-          name: characterJson.name,
-          height: characterJson.height,
-          mass: characterJson.mass,
-          gender: characterJson.gender
-        });
-        await character.save();
-      }
-    }
-    res.status(200).json({ message: 'SEEDS OK' });
-  } catch (error) {
-    console.log(error.message);
-    res.status(400).json({ message: err.message});
-  }
-});
 
 module.exports = router;
