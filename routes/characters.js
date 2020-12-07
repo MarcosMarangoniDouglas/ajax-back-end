@@ -26,10 +26,10 @@ router.get("/", async (req, res) => {
 router.get("/seeds", async (req, res) => {
   try {
     let maxIndex = 50;
+    let insertedCharacters = [];
     for (let index = 1; index <= maxIndex; index++) {
       const characterFetch = await fetch(`https://swapi.dev/api/people/${index}/`);
       const characterJson = await characterFetch.json();
-      console.log(`${index}: ${characterJson.name}`);
       if(!characterJson.name) maxIndex++;
       else {
         const character = new Character({
@@ -38,10 +38,14 @@ router.get("/seeds", async (req, res) => {
           mass: characterJson.mass,
           gender: characterJson.gender
         });
-        await character.save();
+        const findCharacter = await Character.findOne({ name: character.name })
+        if(!findCharacter) {
+          const savedDoc = await character.save();
+          insertedCharacters.push(savedDoc.name);
+        }
       }
     }
-    res.status(200).json({ message: 'SEEDS OK' });
+    res.status(200).json({ inserted_characters: insertedCharacters, quantity: insertedCharacters.length });
   } catch (error) {
     console.log(error.message);
     res.status(400).json({ message: err.message});
