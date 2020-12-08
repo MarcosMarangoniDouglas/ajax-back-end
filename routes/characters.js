@@ -9,9 +9,18 @@ const fetch = require('node-fetch');
  */
 router.get("/", async (req, res) => {
   try {
-    const characters = await Character.find();
-    console.log('IDEX');
-    res.json(characters)
+    const page = parseInt(req.query.page);
+    const size = parseInt(req.query.size);
+    const characters = await Character.findPaginated({}, {
+      page,
+      size
+    });
+    res.json({
+      documents: characters.documents,
+      total: characters.total,
+      size: size,
+      page: page
+    })
   } catch (err) {
     res.status(500).json({message: err.message})
   }
